@@ -56,9 +56,8 @@ function getEmitter() {
             Object.keys(events)
                 .filter(eventName =>
                     eventName === event ||
-                    eventName.startsWith(event + '.')
-                        ? events[eventName].delete(context) : eventName
-                );
+                    eventName.startsWith(event + '.'))
+                .forEach(eventName => events[eventName].delete(context));
 
             return this;
         },
