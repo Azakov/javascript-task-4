@@ -55,8 +55,9 @@ function getEmitter() {
         off: function (event, context) {
             Object.keys(events)
                 .filter(eventName =>
-                    !eventName.indexOf(event) ||
-                    !eventName.indexOf(event + '.') ? events[eventName].delete(context) : eventName
+                    eventName === event ||
+                    eventName.startsWith(event + '.')
+                        ? events[eventName].delete(context) : eventName
                 );
 
             return this;
@@ -85,6 +86,7 @@ function getEmitter() {
          * @returns {Object}
          */
         several: function (event, context, handler, times) {
+            console.info(event, context, handler, times);
             this.on(event, context, () => {
                 if (times > 0) {
                     handler.call(context);
@@ -105,6 +107,7 @@ function getEmitter() {
          * @returns {Object}
          */
         through: function (event, context, handler, frequency) {
+            console.info(event, context, handler, frequency);
             let callsCount = 0;
             this.on(event, context, () => {
                 if (Number.isInteger(callsCount / frequency)) {
