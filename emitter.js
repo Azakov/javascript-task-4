@@ -109,7 +109,7 @@ function getEmitter() {
             console.info(event, context, handler, frequency);
             let callsCount = 0;
             this.on(event, context, () => {
-                if (Number.isInteger(callsCount / frequency)) {
+                if (callsCount % frequency === 0) {
                     handler.call(context);
                 }
                 callsCount++;
