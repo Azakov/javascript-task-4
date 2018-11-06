@@ -41,8 +41,9 @@ function getEmitter() {
             if (!events.hasOwnProperty(event)) {
                 events[event] = new Map();
             }
-            events[event].set(context, handler);
 
+            events[event].set(context, handler);
+        
             return this;
         },
 
@@ -53,12 +54,11 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
-            const eventsSort = Object.keys(events)
-                .filter(eventName =>
-                    eventName === event ||
-                    eventName.startsWith(event + '.'));
-            eventsSort.map(eventName => events[eventName])
-                .forEach(mapElement => mapElement.delete(context));
+            for (let element in events) {
+                if (element === event || element.startsWith(event + '.')) {
+                    events[element].delete(context);
+                }
+            }
 
             return this;
         },
