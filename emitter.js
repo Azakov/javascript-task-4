@@ -41,9 +41,8 @@ function getEmitter() {
             if (!events.hasOwnProperty(event)) {
                 events[event] = new Map();
             }
-
             events[event].set(context, handler);
-        
+
             return this;
         },
 
