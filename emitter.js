@@ -53,11 +53,12 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
-            Object.keys(events)
+            const eventsSort = Object.keys(events)
                 .filter(eventName =>
                     eventName === event ||
-                    eventName.startsWith(event + '.'))
-                .forEach(eventName => events[eventName].delete(context));
+                    eventName.startsWith(event + '.'));
+            eventsSort.map(eventName => events[eventName])
+                .forEach(mapElement => mapElement.delete(context));
 
             return this;
         },
