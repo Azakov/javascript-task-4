@@ -39,9 +39,9 @@ function getEmitter() {
          */
         on: function (event, context, handler) {
             if (!events.hasOwnProperty(event)) {
-                events[event] = new Map();
+                events[event] = [];
             }
-            events[event].set(context, handler);
+            events[event].push({ context, handler });
 
             return this;
         },
@@ -53,9 +53,9 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
-            for (let element in events) {
-                if (element === event || element.startsWith(event + '.')) {
-                    events[element].delete(context);
+            for (let key in events) {
+                if (key === event || key.startsWith(event + '.')) {
+                    events[key] = events[key].filter(pair => pair.context !== context);
                 }
             }
 
@@ -70,7 +70,7 @@ function getEmitter() {
         emit: function (event) {
             getEvents(event)
                 .forEach(eventName => events[eventName]
-                    .forEach((handler, context) => handler.call(context)));
+                    .forEach(element => element.handler.call(element.context)));
 
             return this;
         },
@@ -85,7 +85,6 @@ function getEmitter() {
          * @returns {Object}
          */
         several: function (event, context, handler, times) {
-            console.info(event, context, handler, times);
             this.on(event, context, () => {
                 if (times > 0) {
                     handler.call(context);
@@ -106,7 +105,6 @@ function getEmitter() {
          * @returns {Object}
          */
         through: function (event, context, handler, frequency) {
-            console.info(event, context, handler, frequency);
             let callsCount = 0;
             this.on(event, context, () => {
                 if (callsCount % frequency === 0) {
