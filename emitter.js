@@ -14,16 +14,19 @@ const isStar = true;
 function getEmitter() {
     const events = {};
 
-    function getEvents(event) {
-        let result = [];
-        let eventParse = event.split('.');
-        while (eventParse.length > 0) {
-            let eventName = eventParse.join('.');
-            if (events[eventName]) {
-                result.push(eventName);
-            }
-            eventParse.pop();
+    function checkAndPush(result, event) {
+        if (events[event]) {
+            result.push(event);
         }
+    }
+
+    function getEvents(event) {
+        const result = [];
+        while (event.lastIndexOf('.') > 0) {
+            checkAndPush(result, event);
+            event = event.slice(0, event.lastIndexOf('.'));
+        }
+        checkAndPush(result, event);
 
         return result;
     }
@@ -53,8 +56,9 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
+            const eventDot = event + '.';
             for (let key in events) {
-                if (key === event || key.startsWith(event + '.')) {
+                if (key === event || key.startsWith(eventDot)) {
                     events[key] = events[key].filter(pair => pair.context !== context);
                 }
             }
